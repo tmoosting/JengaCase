@@ -37,6 +37,7 @@ public class UIManager : MonoBehaviour
 
     public void ResetBlockSelection()
     {
+        _clickedBlock = null;
         blockInfoText.text = "No Block Selected";
         towerInfoText.text = "No Tower Selected";
         blockRemoveButton.gameObject.SetActive(false); 
