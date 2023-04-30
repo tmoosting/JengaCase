@@ -23,12 +23,18 @@ public class UIManager : MonoBehaviour
     public void ClickBlock(Block block)
     {
         _clickedBlock = block;
-        blockInfoText.text = block.blockData.standardid;
+        string blockStr = "";
+        blockStr += block.blockData.grade + ": " + block.blockData.domain;
+        blockStr += "\n\n" + block.blockData.cluster;
+        blockStr += "\n\n" + block.blockData.standardid + ": " + block.blockData.standarddescription;
+
+        blockInfoText.text = blockStr;
         towerInfoText.text = "Tower: " + block.ownerTower.gameObject.name;
         
         blockRemoveButton.gameObject.SetActive(true);
     }
 
+ 
     public void ClickDestroyBlockButton()
     {
         if (_clickedBlock != null)
@@ -54,5 +60,11 @@ public class UIManager : MonoBehaviour
                 Debug.LogError("No TowerController found in scene!");
             return _towerController;
         }
+    }
+
+    public void ClickDeleteBlock(Block block)
+    {
+        Debug.Log("del");
+        TowerController.DestroyBlock(block);
     }
 }

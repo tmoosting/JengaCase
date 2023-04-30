@@ -13,9 +13,13 @@ public class TowerBuilder : MonoBehaviour
  
     private BlockData[] blocksData; 
     
-    public Vector3 blockSize = new Vector3(0.225f, 0.025f, 0.075f); // Block dimensions in meters (7.5 cm × 2.5 cm × 1.5 cm)
-    public float blockSpacing = 0.0025f; // Spacing between blocks in meters (0.25 cm)
-    
+    public Vector3 blockSize = new Vector3(0.075f, 0.015f, 0.025f); // based on actual jenga block dimensions: 1.5 cm × 2.5 cm × 7.5 cm
+    public float blockSpacingY = 0.0025f; // Spacing between blocks in meters (0.25 cm) along the Y-axis
+    public float blockSpacingXZ = 0.0025f; // Spacing between blocks in meters (0.25 cm) along the X and Z axes
+
+    public  float minScaleFactor = 0.98f; // for random variations / imperfections
+    public  float maxScaleFactor = 1.02f;
+    public float constraintDelay; //to mitigate initial bounce on physics delay; in seconds
     
     private  List<BlockData> _grade1StackData = new List<BlockData>();
     private  List<BlockData> _grade2StackData = new List<BlockData>();
@@ -61,6 +65,11 @@ public class TowerBuilder : MonoBehaviour
     }
     private void CreateJengaTower(Tower tower, List<BlockData> stackDataList)
     {
+        // workaround for allowing rescaling of towers 
+        Vector3 originalScale = tower.transform.localScale;
+        tower.transform.localScale = new Vector3(1, 1, 1); 
+        
+        
         // Create and position the blocks within the tower
         int blocksPerLayer = 3;
         int layers = tower.totalLayers; 
@@ -72,9 +81,10 @@ public class TowerBuilder : MonoBehaviour
             bool horizontalLayer = i % 2 == 0;
             int startIndex = i * blocksPerLayer;
             BuildLayer(position, horizontalLayer, tower, stackDataList, startIndex);
-            position.y += blockSize.y + blockSpacing;
+            position.y += blockSize.y + blockSpacingY;
         }
      //   Debug.Log("Tower: " + tower.name + ", Layers: " + layers + ", Total Blocks: " + stackDataList.Count);
+     tower.transform.localScale = originalScale;
     }
 
   void BuildLayer(Vector3 position, bool horizontal, Tower tower, List<BlockData> stackDataList, int startIndex)
@@ -85,11 +95,11 @@ public class TowerBuilder : MonoBehaviour
       // Adjust the starting position for centering
       if (horizontal)
       {
-          position.x -= (blockSize.z + blockSpacing) * (blockCount - 1) / 2.0f;
+          position.x -= (blockSize.z + blockSpacingXZ) * (blockCount - 1) / 2.0f;
       }
       else
       {
-          position.z -= (blockSize.z + blockSpacing) * (blockCount - 1) / 2.0f;
+          position.z -= (blockSize.z + blockSpacingXZ) * (blockCount - 1) / 2.0f;
       }
 
       for (int i = 0; i < blockCount; i++)
@@ -103,17 +113,23 @@ public class TowerBuilder : MonoBehaviour
           block.ownerTower = tower;
           block.blockData = currentBlockData;
           block.GetComponent<Rigidbody>().centerOfMass = Vector3.zero;
-          blockObj.transform.localScale = blockSize;
+          
+          // Apply random scale factors
+          float randomXScaleFactor = Random.Range(minScaleFactor, maxScaleFactor);
+          float randomYScaleFactor = Random.Range(minScaleFactor, maxScaleFactor);
+          float randomZScaleFactor = Random.Range(minScaleFactor, maxScaleFactor);
+          Vector3 randomBlockScale = new Vector3(blockSize.x * randomXScaleFactor, blockSize.y * randomYScaleFactor, blockSize.z * randomZScaleFactor);
+          blockObj.transform.localScale = randomBlockScale; 
 
           if (horizontal)
           {
-              offset = new Vector3(blockSize.z + blockSpacing, 0, 0);
+              offset = new Vector3(blockSize.z + blockSpacingXZ, 0, 0);
               position += offset;
               blockObj.transform.localRotation = Quaternion.Euler(0, 90, 0);
           }
           else
           {
-              offset = new Vector3(0, 0, blockSize.z + blockSpacing);
+              offset = new Vector3(0, 0, blockSize.z + blockSpacingXZ);
               position += offset;
               blockObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
           }

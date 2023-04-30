@@ -8,9 +8,10 @@ public class Block : MonoBehaviour
    public Tower ownerTower;
    public BlockData blockData;
 
-   private void OnMouseUp()
+   private void OnMouseDown()
    {
-      UIManager.ClickBlock(this);
+      if (Input.GetMouseButtonDown(0))
+         UIManager.ClickBlock(this); 
    }
    
    private UIManager _uiManager;

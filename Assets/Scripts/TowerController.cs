@@ -14,6 +14,8 @@ public class TowerController : MonoBehaviour
     {
         TowerBuilder.BuildTowers();
     }
+    
+    #region UICalls
     public void RebuildTowers()
     {
         DestroyTowerBlocks(towerOne);   
@@ -33,32 +35,60 @@ public class TowerController : MonoBehaviour
 
     public void EnableTowerPhysics()
     {
-        foreach (Block block in towerOne.towerBlocks)
+        StartCoroutine(EnableTowerPhysicsWithConstraints(towerOne));
+        StartCoroutine(EnableTowerPhysicsWithConstraints(towerTwo));
+        StartCoroutine(EnableTowerPhysicsWithConstraints(towerThree));
+
+    }
+    private IEnumerator EnableTowerPhysicsWithConstraints(Tower tower)
+    {
+        foreach (Block block in tower.towerBlocks)
         {
             Rigidbody rb = block.GetComponent<Rigidbody>();
             if (rb != null)
+            {
+                rb.constraints = RigidbodyConstraints.FreezeRotation; // Lock rotation
+                rb.constraints |= RigidbodyConstraints.FreezePositionX; // Lock position in the X axis
+                rb.constraints |= RigidbodyConstraints.FreezePositionZ; // Lock position in the Z axis
                 rb.isKinematic = false;
+            }
         }
-        foreach (Block block in towerTwo.towerBlocks)
+        yield return new WaitForSeconds(TowerBuilder.constraintDelay);
+
+        foreach (Block block in tower.towerBlocks)
         {
             Rigidbody rb = block.GetComponent<Rigidbody>();
             if (rb != null)
-                rb.isKinematic = false;
-        }
-        foreach (Block block in towerThree.towerBlocks)
-        {
-            Rigidbody rb = block.GetComponent<Rigidbody>();
-            if (rb != null)
-                rb.isKinematic = false;
+                rb.constraints = RigidbodyConstraints.None;
         }
     }
+ 
+
+    public void DestroyGlassBlocks()
+    {
+        DestroyTowerGlassBlocks(towerOne);   
+        DestroyTowerGlassBlocks(towerTwo);   
+        DestroyTowerGlassBlocks(towerThree);   
+    }
     
-    private void DestroyTowerBlocks(Tower tower)
+    #endregion
+    private void DestroyTowerGlassBlocks(Tower tower)
     {
         List<Block> blocksToDestroy = new List<Block>(tower.towerBlocks);
         foreach (Block block in blocksToDestroy)
             if (block != null)
-                Destroy(block.gameObject);
+                if (block.blockData.mastery == 0)
+                {
+                    tower.towerBlocks.Remove(block);
+                    Destroy(block.gameObject);
+                }
+    }
+    private void DestroyTowerBlocks(Tower tower)
+    {
+        List<Block> blocksToDestroy = new List<Block>(tower.towerBlocks);
+        foreach (Block block in blocksToDestroy)
+            if (block != null) 
+                    Destroy(block.gameObject);  
         tower.towerBlocks.Clear();
     }
     
