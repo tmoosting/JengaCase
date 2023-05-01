@@ -8,14 +8,13 @@ public class TowerBuilder : MonoBehaviour
     
     public GameObject glassBlockPrefab;
     public GameObject woodBlockPrefab;
-    public GameObject stoneBlockPrefab;
-    public GameObject labelPrefab; 
+    public GameObject stoneBlockPrefab; 
  
     private BlockData[] blocksData; 
     
     public Vector3 blockSize = new Vector3(0.075f, 0.015f, 0.025f); // based on actual jenga block dimensions: 1.5 cm × 2.5 cm × 7.5 cm
-    public float blockSpacingY = 0.0025f; // Spacing between blocks in meters (0.25 cm) along the Y-axis
-    public float blockSpacingXZ = 0.0025f; // Spacing between blocks in meters (0.25 cm) along the X and Z axes
+    public float blockSpacingY = 0.01f; // Spacing between blocks in meters (0.25 cm) along the Y-axis
+    public float blockSpacingXZ = 0.001f; // Spacing between blocks in meters (0.25 cm) along the X and Z axes
 
     public  float minScaleFactor = 0.98f; // for random variations / imperfections
     public  float maxScaleFactor = 1.02f;

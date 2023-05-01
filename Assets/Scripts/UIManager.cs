@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,13 @@ public class UIManager : MonoBehaviour
         ResetBlockSelection();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Delete))
+            if (_clickedBlock != null)
+                ClickDestroyBlockButton();
+    }
+
     public void ClickBlock(Block block)
     {
         _clickedBlock = block;
@@ -34,6 +42,7 @@ public class UIManager : MonoBehaviour
         blockRemoveButton.gameObject.SetActive(true);
     }
 
+    
  
     public void ClickDestroyBlockButton()
     {

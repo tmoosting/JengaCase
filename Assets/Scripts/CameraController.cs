@@ -53,6 +53,7 @@ public class CameraController : MonoBehaviour
         UpdateCameraPosition();
     }
 
+    
     private void FocusOnTower(int index)
     {
         if (index < 0 || index >= towers.Length) return;

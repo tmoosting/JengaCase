@@ -15,6 +15,14 @@ public class TowerController : MonoBehaviour
         TowerBuilder.BuildTowers();
     }
     
+    
+    public void DestroyBlock(Block block)
+    {
+        block.ownerTower.towerBlocks.Remove(block);
+        Destroy(block.gameObject);
+        UIManager.ResetBlockSelection();
+    }
+    
     #region UICalls
     public void RebuildTowers()
     {
@@ -22,17 +30,7 @@ public class TowerController : MonoBehaviour
         DestroyTowerBlocks(towerTwo);   
         DestroyTowerBlocks(towerThree);   
         TowerBuilder.BuildTowers();
-    }
-
-
-    public void DestroyBlock(Block block)
-    {
-        block.ownerTower.towerBlocks.Remove(block);
-        Destroy(block.gameObject);
-        UIManager.ResetBlockSelection();
-    }
- 
-
+    } 
     public void EnableTowerPhysics()
     {
         StartCoroutine(EnableTowerPhysicsWithConstraints(towerOne));
