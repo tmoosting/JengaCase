@@ -26,6 +26,7 @@ public class TowerController : MonoBehaviour
     #region UICalls
     public void RebuildTowers()
     {
+        UIManager.ResetBlockSelection();
         DestroyTowerBlocks(towerOne);   
         DestroyTowerBlocks(towerTwo);   
         DestroyTowerBlocks(towerThree);   
